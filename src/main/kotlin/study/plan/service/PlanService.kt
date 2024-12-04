@@ -6,6 +6,7 @@ import study.member.repository.MemberRepository
 import study.plan.dto.response.PlanResponse
 import study.plan.dto.response.PlansResponse
 import study.plan.dto.resquest.PlanRequest
+import study.plan.dto.resquest.UpdatePlanRequest
 import study.plan.entity.Plan
 import study.plan.repository.PlanRepository
 
@@ -15,10 +16,10 @@ class PlanService(
         val planRepository: PlanRepository
 ) {
     @Transactional
-    fun save(planRequest: PlanRequest): PlanResponse {
-        val member = memberRepository.findById(planRequest.memberId)
+    fun save(memberId: Long, planRequest: PlanRequest): PlanResponse {
+        val member = memberRepository.findById(memberId)
                 .orElseThrow {
-                    IllegalArgumentException("member: ${planRequest.memberId}는 존재하지 않습니다.")
+                    IllegalArgumentException("member: ${memberId}는 존재하지 않습니다.")
                 }
         val plan = Plan(
                 title = planRequest.title,
@@ -50,7 +51,7 @@ class PlanService(
 
     fun findPlanById(id: Long): PlanResponse {
         val plan = planRepository.findById(id)
-                .orElseThrow{
+                .orElseThrow {
                     IllegalArgumentException("plan: ${id}는 존재하지 않습니다.")
                 }
 
@@ -59,6 +60,32 @@ class PlanService(
                 memberId = plan.member.id,
                 title = plan.title,
                 content = plan.content
+        )
+    }
+
+    @Transactional
+    fun updatePlan(memberId: Long, planId: Long, updatePlanRequest: UpdatePlanRequest): PlanResponse {
+        val member = memberRepository.findById(memberId)
+                .orElseThrow {
+                    IllegalArgumentException("member: ${memberId}는 존재하지 않습니다.")
+                }
+        val findPlan = planRepository.findPlanByIdAndMember(planId, member)
+                ?: throw IllegalArgumentException("plan: ${planId}는 존재하지 않습니다.")
+
+        updatePlanRequest.title?.let {
+            findPlan.title = it
+        }
+        updatePlanRequest.content?.let {
+            findPlan.content = it
+        }
+
+        planRepository.save(findPlan)
+
+        return PlanResponse(
+                id = findPlan.id,
+                memberId = findPlan.member.id,
+                title = findPlan.title,
+                content = findPlan.content
         )
     }
 }

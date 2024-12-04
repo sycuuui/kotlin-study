@@ -13,8 +13,8 @@ data class Plan (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long =0,
-        val title: String,
-        val content: String,
+        var title: String,
+        var content: String,
 
         @ManyToOne
         @JoinColumn(name = "member_id")
