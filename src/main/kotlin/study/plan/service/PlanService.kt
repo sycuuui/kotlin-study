@@ -17,7 +17,7 @@ class PlanService(
     @Transactional
     fun save(planRequest: PlanRequest): PlanResponse {
         val member = memberRepository.findById(planRequest.memberId)
-                .orElseThrow{
+                .orElseThrow {
                     IllegalArgumentException("member: ${planRequest.memberId}는 존재하지 않습니다.")
                 }
         val plan = Plan(
@@ -36,13 +36,29 @@ class PlanService(
 
     fun findAll(): PlansResponse {
         val findPlans: List<PlanResponse> = planRepository.findAll()
-                .map { plan -> PlanResponse(
-                        id = plan.id,
-                        memberId = plan.member.id,
-                        title = plan.title,
-                        content = plan.content
-                ) }
+                .map { plan ->
+                    PlanResponse(
+                            id = plan.id,
+                            memberId = plan.member.id,
+                            title = plan.title,
+                            content = plan.content
+                    )
+                }
 
         return PlansResponse(findPlans)
+    }
+
+    fun findPlanById(id: Long): PlanResponse {
+        val plan = planRepository.findById(id)
+                .orElseThrow{
+                    IllegalArgumentException("plan: ${id}는 존재하지 않습니다.")
+                }
+
+        return PlanResponse(
+                id = plan.id,
+                memberId = plan.member.id,
+                title = plan.title,
+                content = plan.content
+        )
     }
 }
