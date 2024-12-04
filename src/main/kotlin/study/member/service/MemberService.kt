@@ -2,6 +2,7 @@ package study.member.service
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import study.member.dto.response.MemberListResponse
 import study.member.dto.response.MemberReponse
 import study.member.dto.resquest.MemberRequest
 import study.member.entity.Member
@@ -25,6 +26,17 @@ class MemberService(
                 name = savedMember.name,
                 email = savedMember.email
         )
+    }
+
+    fun findAll(): MemberListResponse {
+        val findMembers: List<MemberReponse> = memberRepository.findAll()
+                .map { member -> MemberReponse(
+                        id = member.id,
+                        name = member.name,
+                        email = member.email
+                ) }
+
+        return MemberListResponse( members = findMembers)
     }
 
     fun delete(memberId: Long) {
