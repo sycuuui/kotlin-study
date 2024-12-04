@@ -1,16 +1,20 @@
 package study.plan.service
 
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import study.member.repository.MemberRepository
 import study.plan.dto.response.PlanResponse
+import study.plan.dto.response.PlansResponse
 import study.plan.dto.resquest.PlanRequest
 import study.plan.entity.Plan
+import study.plan.repository.PlanRepository
 
 @Service
 class PlanService(
         val memberRepository: MemberRepository,
-        val planRepository: MemberRepository
+        val planRepository: PlanRepository
 ) {
+    @Transactional
     fun save(planRequest: PlanRequest): PlanResponse {
         val member = memberRepository.findById(planRequest.memberId)
                 .orElseThrow{
@@ -28,5 +32,17 @@ class PlanService(
                 memberId = plan.member.id,
                 content = plan.content
         )
+    }
+
+    fun findAll(): PlansResponse {
+        val findPlans: List<PlanResponse> = planRepository.findAll()
+                .map { plan -> PlanResponse(
+                        id = plan.id,
+                        memberId = plan.member.id,
+                        title = plan.title,
+                        content = plan.content
+                ) }
+
+        return PlansResponse(findPlans)
     }
 }
