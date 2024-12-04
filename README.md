@@ -1,4 +1,4 @@
-`# kotlin 언어 springboot 프로젝트 
+# kotlin 언어 springboot 프로젝트 
 
 ## kotlin 언어로 springboot 프로젝트 경험해보기 위해 간단한 CURD API 중심 프로젝트 진행해보았습니다.
 
