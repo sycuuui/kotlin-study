@@ -1,6 +1,5 @@
 package study.plan.contorller
 
-import jakarta.websocket.server.PathParam
 import org.springframework.web.bind.annotation.*
 import study.plan.dto.response.PlanResponse
 import study.plan.dto.response.PlansResponse
@@ -13,7 +12,7 @@ import study.plan.service.PlanService
 class PlanController(
         val planService: PlanService
 ) {
-    @PostMapping
+    @PostMapping("/{member_id}")
     fun save(@PathVariable(name = "member_id") memberId: Long,
              @RequestBody planRequest: PlanRequest): PlanResponse = planService.save(memberId, planRequest)
 
@@ -24,8 +23,12 @@ class PlanController(
     fun findPlanById(@PathVariable(name = "plan_id") id: Long): PlanResponse = planService.findPlanById(id)
 
     @PatchMapping("/{member_id}/{plan_id}")
-    fun updatePlan(@PathVariable(name = "member_id") memberId: Long,
-                   @PathVariable(name = "plan_id") planId: Long,
-                   @RequestBody updatePlanRequest: UpdatePlanRequest): PlanResponse = planService.updatePlan(memberId, planId, updatePlanRequest)
+    fun update(@PathVariable(name = "member_id") memberId: Long,
+               @PathVariable(name = "plan_id") planId: Long,
+               @RequestBody updatePlanRequest: UpdatePlanRequest): PlanResponse = planService.update(memberId, planId, updatePlanRequest)
+
+    @DeleteMapping("/{member_id}/{plan_id}")
+    fun delete(@PathVariable(name = "member_id") memberId: Long,
+               @PathVariable(name = "plan_id") planId: Long) = planService.delete(memberId, planId)
 
 }

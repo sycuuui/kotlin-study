@@ -64,7 +64,7 @@ class PlanService(
     }
 
     @Transactional
-    fun updatePlan(memberId: Long, planId: Long, updatePlanRequest: UpdatePlanRequest): PlanResponse {
+    fun update(memberId: Long, planId: Long, updatePlanRequest: UpdatePlanRequest): PlanResponse {
         val member = memberRepository.findById(memberId)
                 .orElseThrow {
                     IllegalArgumentException("member: ${memberId}는 존재하지 않습니다.")
@@ -87,5 +87,17 @@ class PlanService(
                 title = findPlan.title,
                 content = findPlan.content
         )
+    }
+
+    @Transactional
+    fun delete(memberId: Long, planId: Long){
+        val member = memberRepository.findById(memberId)
+                .orElseThrow {
+                    IllegalArgumentException("member: ${memberId}는 존재하지 않습니다.")
+                }
+        val findPlan = planRepository.findPlanByIdAndMember(planId, member)
+                ?: throw IllegalArgumentException("plan: ${planId}는 존재하지 않습니다.")
+
+        planRepository.delete(findPlan)
     }
 }
